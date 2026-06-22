@@ -15,6 +15,8 @@ menjadi gambar untuk lampiran UAS.
 
 Aplikasi memiliki **11 layar** yang dikelola satu `NavHost` (lihat `MainActivity.kt`).
 
+![Peta navigasi](img/nav_flow.png)
+
 ```mermaid
 flowchart TD
     Splash([Splash Screen]) -->|sudah login| Dashboard
@@ -93,6 +95,8 @@ flowchart TD
 ---
 
 ## 3. Siklus Hidup Tiket (Ticket Lifecycle)
+
+![Siklus hidup tiket](img/lifecycle.png)
 
 ```mermaid
 stateDiagram-v2

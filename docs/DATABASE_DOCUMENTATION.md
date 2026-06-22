@@ -25,6 +25,8 @@ di phpMyAdmin / MySQL Workbench / DBeaver, lalu **screenshot tabel** untuk lampi
 
 ## 2. Diagram ERD
 
+![ERD](img/erd.png)
+
 ```
 ┌─────────────────────┐
 │        users        │
