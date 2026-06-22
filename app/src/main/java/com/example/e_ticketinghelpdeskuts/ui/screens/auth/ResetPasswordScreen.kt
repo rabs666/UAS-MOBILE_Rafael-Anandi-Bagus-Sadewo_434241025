@@ -9,6 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.e_ticketinghelpdeskuts.ui.components.MessageBanner
 import com.example.e_ticketinghelpdeskuts.ui.screens.ticket.TicketViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -49,7 +50,7 @@ fun ResetPasswordScreen(navController: NavController, viewModel: TicketViewModel
             
             authMessage?.let { message ->
                 Spacer(modifier = Modifier.height(16.dp))
-                Text(text = message, color = MaterialTheme.colorScheme.primary)
+                MessageBanner(text = message.text, isError = message.isError)
             }
 
             Spacer(modifier = Modifier.height(32.dp))

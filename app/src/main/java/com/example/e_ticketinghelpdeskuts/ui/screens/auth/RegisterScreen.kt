@@ -13,6 +13,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.e_ticketinghelpdeskuts.ui.components.MessageBanner
 import com.example.e_ticketinghelpdeskuts.ui.navigation.Screen
 import com.example.e_ticketinghelpdeskuts.ui.screens.ticket.TicketViewModel
 import com.example.e_ticketinghelpdeskuts.ui.utils.InputValidation
@@ -137,34 +138,10 @@ fun RegisterScreen(navController: NavController, viewModel: TicketViewModel) {
             enabled = !isLoading
         )
 
-        // Auth Message
+        // Auth Message — typed, colour driven by AuthMessage.isError
         authMessage?.let { message ->
             Spacer(modifier = Modifier.height(12.dp))
-            val isError = message.contains("gagal", ignoreCase = true) || message.contains("error", ignoreCase = true) || message.contains("sudah", ignoreCase = true)
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(
-                    containerColor = if (isError) MaterialTheme.colorScheme.errorContainer else MaterialTheme.colorScheme.primaryContainer
-                )
-            ) {
-                Row(
-                    modifier = Modifier.padding(12.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        imageVector = if (isError) Icons.Default.Warning else Icons.Default.Info,
-                        contentDescription = null,
-                        tint = if (isError) MaterialTheme.colorScheme.onErrorContainer else MaterialTheme.colorScheme.onPrimaryContainer,
-                        modifier = Modifier.size(20.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        message,
-                        color = if (isError) MaterialTheme.colorScheme.onErrorContainer else MaterialTheme.colorScheme.onPrimaryContainer,
-                        style = MaterialTheme.typography.bodySmall
-                    )
-                }
-            }
+            MessageBanner(text = message.text, isError = message.isError)
         }
 
         Spacer(modifier = Modifier.height(24.dp))

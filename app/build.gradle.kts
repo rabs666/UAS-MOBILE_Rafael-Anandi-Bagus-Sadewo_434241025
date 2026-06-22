@@ -7,7 +7,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
 }
 
-// Modul 7 - Build Release: baca kredensial signing dari keystore.properties (di-gitignore)
+// Modul 7 - Build Release: baca kredensial signing
 val keystorePropertiesFile = rootProject.file("keystore.properties")
 val keystoreProperties = Properties().apply {
     if (keystorePropertiesFile.exists()) {
@@ -17,19 +17,19 @@ val keystoreProperties = Properties().apply {
 
 android {
     namespace = "com.example.e_ticketinghelpdeskuts"
-    compileSdk = 35
+    // Diubah ke 36 agar sinkron dengan library terbaru (mengatasi error AAR metadata)
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.example.e_ticketinghelpdeskuts"
         minSdk = 24
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    // Modul 7 langkah 6: konfigurasi signing dari keys.jks
     signingConfigs {
         create("release") {
             if (keystorePropertiesFile.exists()) {
@@ -43,11 +43,11 @@ android {
 
     buildTypes {
         release {
-            // Modul 7 langkah 10: keamanan dasar + optimasi (minify & shrink resources)
+            // Sesuai panduan Foto Langkah 11
             isMinifyEnabled = true
             isShrinkResources = true
 
-            // Modul 7 langkah 5-9: tanda tangani APK/AAB release dengan keys.jks
+            // Jika file keys.jks belum ada, gunakan debug signing agar tetap bisa di-build (Foto 11)
             signingConfig = if (keystorePropertiesFile.exists()) {
                 signingConfigs.getByName("release")
             } else {
@@ -58,6 +58,12 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+        }
+        
+        debug {
+            // Pastikan debug build juga lancar
+            applicationIdSuffix = ".debug"
+            isDebuggable = true
         }
     }
     compileOptions {

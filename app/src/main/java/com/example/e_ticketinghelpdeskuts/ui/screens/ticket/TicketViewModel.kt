@@ -29,6 +29,17 @@ import java.util.Locale
 import java.util.UUID
 import kotlin.random.Random
 
+/**
+ * Typed feedback for auth/permission actions. [isError] drives the banner colour & icon
+ * explicitly, so the UI never has to guess intent by matching words in the message.
+ */
+data class AuthMessage(val text: String, val isError: Boolean) {
+    companion object {
+        fun error(text: String) = AuthMessage(text, isError = true)
+        fun success(text: String) = AuthMessage(text, isError = false)
+    }
+}
+
 class TicketViewModel(
     private val repository: TicketRepository
 ) : ViewModel() {
@@ -42,8 +53,8 @@ class TicketViewModel(
     private val _currentUser = MutableStateFlow<AppUser?>(null)
     val currentUser: StateFlow<AppUser?> = _currentUser.asStateFlow()
 
-    private val _authMessage = MutableStateFlow<String?>(null)
-    val authMessage: StateFlow<String?> = _authMessage.asStateFlow()
+    private val _authMessage = MutableStateFlow<AuthMessage?>(null)
+    val authMessage: StateFlow<AuthMessage?> = _authMessage.asStateFlow()
 
     private val _isDarkMode = MutableStateFlow(false)
     val isDarkMode: StateFlow<Boolean> = _isDarkMode.asStateFlow()
@@ -108,7 +119,7 @@ class TicketViewModel(
 
     fun login(username: String, password: String): Boolean {
         if (username.isBlank() || password.isBlank()) {
-            _authMessage.value = "Username dan password wajib diisi."
+            _authMessage.value = AuthMessage.error("Username dan password wajib diisi.")
             return false
         }
 
@@ -117,33 +128,33 @@ class TicketViewModel(
         }
 
         return if (user == null) {
-            _authMessage.value = "Login gagal. Cek username atau password."
+            _authMessage.value = AuthMessage.error("Login gagal. Cek username atau password.")
             false
         } else {
             _currentUser.value = user
-            _authMessage.value = "Selamat datang, ${user.name}."
+            _authMessage.value = AuthMessage.success("Selamat datang, ${user.name}.")
             true
         }
     }
 
     fun register(name: String, username: String, email: String, password: String): Boolean {
         if (name.isBlank() || username.isBlank() || email.isBlank() || password.isBlank()) {
-            _authMessage.value = "Semua field wajib diisi."
+            _authMessage.value = AuthMessage.error("Semua field wajib diisi.")
             return false
         }
 
         if (password.length < 6) {
-            _authMessage.value = "Password minimal 6 karakter."
+            _authMessage.value = AuthMessage.error("Password minimal 6 karakter.")
             return false
         }
 
         val users = _registeredUsers.value
         if (users.any { it.username.equals(username.trim(), ignoreCase = true) }) {
-            _authMessage.value = "Username sudah dipakai."
+            _authMessage.value = AuthMessage.error("Username sudah dipakai.")
             return false
         }
         if (users.any { it.email.equals(email.trim(), ignoreCase = true) }) {
-            _authMessage.value = "Email sudah terdaftar."
+            _authMessage.value = AuthMessage.error("Email sudah terdaftar.")
             return false
         }
 
@@ -157,29 +168,29 @@ class TicketViewModel(
         )
 
         _registeredUsers.value = users + newUser
-        _authMessage.value = "Registrasi berhasil. Silakan login."
+        _authMessage.value = AuthMessage.success("Registrasi berhasil. Silakan login.")
         return true
     }
 
     fun resetPassword(email: String): Boolean {
         if (email.isBlank()) {
-            _authMessage.value = "Email wajib diisi."
+            _authMessage.value = AuthMessage.error("Email wajib diisi.")
             return false
         }
 
         val exists = _registeredUsers.value.any { it.email.equals(email.trim(), ignoreCase = true) }
         return if (exists) {
-            _authMessage.value = "Instruksi reset password telah dikirim ke ${email.trim()}."
+            _authMessage.value = AuthMessage.success("Instruksi reset password telah dikirim ke ${email.trim()}.")
             true
         } else {
-            _authMessage.value = "Email tidak ditemukan."
+            _authMessage.value = AuthMessage.error("Email tidak ditemukan.")
             false
         }
     }
 
     fun logout() {
         _currentUser.value = null
-        _authMessage.value = "Berhasil logout."
+        _authMessage.value = AuthMessage.success("Berhasil logout.")
     }
 
     fun setDarkMode(enabled: Boolean) {
@@ -211,12 +222,12 @@ class TicketViewModel(
     ) {
         val user = _currentUser.value
         if (user == null) {
-            _authMessage.value = "Silakan login terlebih dahulu."
+            _authMessage.value = AuthMessage.error("Silakan login terlebih dahulu.")
             return
         }
 
         if (user.role != UserRole.USER) {
-            _authMessage.value = "Hanya user pelapor yang dapat membuat tiket baru."
+            _authMessage.value = AuthMessage.error("Hanya user pelapor yang dapat membuat tiket baru.")
             return
         }
 
@@ -248,12 +259,12 @@ class TicketViewModel(
     fun updateStatus(id: String, status: TicketStatus) {
         val actor = _currentUser.value
         if (actor == null) {
-            _authMessage.value = "Silakan login terlebih dahulu."
+            _authMessage.value = AuthMessage.error("Silakan login terlebih dahulu.")
             return
         }
 
         if (actor.role == UserRole.USER) {
-            _authMessage.value = "Hanya helpdesk/admin yang dapat mengubah status tiket."
+            _authMessage.value = AuthMessage.error("Hanya helpdesk/admin yang dapat mengubah status tiket.")
             return
         }
 
@@ -265,12 +276,12 @@ class TicketViewModel(
     fun assignTicket(id: String, assignee: String) {
         val actor = _currentUser.value
         if (actor == null) {
-            _authMessage.value = "Silakan login terlebih dahulu."
+            _authMessage.value = AuthMessage.error("Silakan login terlebih dahulu.")
             return
         }
 
         if (actor.role == UserRole.USER) {
-            _authMessage.value = "Hanya helpdesk/admin yang dapat assign tiket."
+            _authMessage.value = AuthMessage.error("Hanya helpdesk/admin yang dapat assign tiket.")
             return
         }
 
