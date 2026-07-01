@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.e_ticketinghelpdeskuts.domain.model.TicketStatus
+import com.example.e_ticketinghelpdeskuts.domain.model.displayName
 import com.example.e_ticketinghelpdeskuts.ui.theme.StatusClosedContainer
 import com.example.e_ticketinghelpdeskuts.ui.theme.StatusClosedContainerDark
 import com.example.e_ticketinghelpdeskuts.ui.theme.StatusClosedOnContainer
@@ -27,13 +28,8 @@ import com.example.e_ticketinghelpdeskuts.ui.theme.StatusProgressContainerDark
 import com.example.e_ticketinghelpdeskuts.ui.theme.StatusProgressOnContainer
 import com.example.e_ticketinghelpdeskuts.ui.theme.StatusProgressOnContainerDark
 
-/** Human-readable label for a ticket status. */
-fun TicketStatus.label(): String = when (this) {
-    TicketStatus.OPEN -> "Open"
-    TicketStatus.ASSIGNED -> "Assigned"
-    TicketStatus.IN_PROGRESS -> "In Progress"
-    TicketStatus.CLOSED -> "Selesai"
-}
+/** Human-readable label for a ticket status. Sumber tunggal ada di domain [displayName]. */
+fun TicketStatus.label(): String = displayName()
 
 private data class StatusColors(val container: Color, val content: Color)
 

@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.e_ticketinghelpdeskuts.domain.model.Ticket
 import com.example.e_ticketinghelpdeskuts.domain.model.TicketStatus
+import com.example.e_ticketinghelpdeskuts.domain.model.displayName
 import com.example.e_ticketinghelpdeskuts.ui.navigation.Screen
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -162,7 +163,7 @@ fun TicketCardItem(ticket: Ticket, onClick: () -> Unit) {
                     border = androidx.compose.foundation.BorderStroke(1.dp, statusColor.copy(alpha = 0.3f))
                 ) {
                     Text(
-                        text = ticket.status.name,
+                        text = ticket.status.displayName().uppercase(),
                         modifier = Modifier.padding(horizontal = 10.dp, vertical = 2.dp),
                         color = statusColor,
                         style = MaterialTheme.typography.labelSmall,

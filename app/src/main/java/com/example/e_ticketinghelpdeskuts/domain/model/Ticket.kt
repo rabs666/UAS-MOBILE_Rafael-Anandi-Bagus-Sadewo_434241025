@@ -54,6 +54,18 @@ enum class TicketStatus {
     OPEN, ASSIGNED, IN_PROGRESS, CLOSED
 }
 
+/**
+ * Nama status yang mudah dibaca, mengikuti istilah pada SRS (FR-009):
+ * Open, Assigned, In Progress, Closed. Dipakai sebagai sumber tunggal
+ * agar teks status konsisten di seluruh UI, log aktivitas, dan notifikasi.
+ */
+fun TicketStatus.displayName(): String = when (this) {
+    TicketStatus.OPEN -> "Open"
+    TicketStatus.ASSIGNED -> "Assigned"
+    TicketStatus.IN_PROGRESS -> "In Progress"
+    TicketStatus.CLOSED -> "Closed"
+}
+
 enum class UserRole {
     USER, HELPDESK, ADMIN
 }

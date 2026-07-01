@@ -150,7 +150,7 @@ fun DashboardScreen(navController: NavController, viewModel: TicketViewModel) {
             )
             Spacer(modifier = Modifier.height(12.dp))
             
-            // Re-designed Stat Grid
+            // Stat Grid — 5 metrik sesuai SRS FR-009: Total, Open, Assign, In Progress, Closed
             Row(modifier = Modifier.fillMaxWidth()) {
                 Column(modifier = Modifier.weight(1f).padding(end = 6.dp)) {
                     StatCard("Total Tiket", totalCount.toString(), Icons.AutoMirrored.Filled.List, MaterialTheme.colorScheme.primary) {
@@ -158,8 +158,13 @@ fun DashboardScreen(navController: NavController, viewModel: TicketViewModel) {
                         navController.navigate(Screen.TicketList.route)
                     }
                     Spacer(modifier = Modifier.height(12.dp))
-                    StatCard("In Progress", progressCount.toString(), Icons.Default.Build, MaterialTheme.colorScheme.secondary) {
-                        viewModel.selectStatusFilter(TicketStatus.IN_PROGRESS)
+                    StatCard("Assign", assignedCount.toString(), Icons.Default.AssignmentInd, MaterialTheme.colorScheme.primary) {
+                        viewModel.selectStatusFilter(TicketStatus.ASSIGNED)
+                        navController.navigate(Screen.TicketList.route)
+                    }
+                    Spacer(modifier = Modifier.height(12.dp))
+                    StatCard("Closed", closedCount.toString(), Icons.Default.CheckCircle, MaterialTheme.colorScheme.tertiary) {
+                        viewModel.selectStatusFilter(TicketStatus.CLOSED)
                         navController.navigate(Screen.TicketList.route)
                     }
                 }
@@ -169,8 +174,8 @@ fun DashboardScreen(navController: NavController, viewModel: TicketViewModel) {
                         navController.navigate(Screen.TicketList.route)
                     }
                     Spacer(modifier = Modifier.height(12.dp))
-                    StatCard("Selesai", closedCount.toString(), Icons.Default.CheckCircle, MaterialTheme.colorScheme.tertiary) {
-                        viewModel.selectStatusFilter(TicketStatus.CLOSED)
+                    StatCard("In Progress", progressCount.toString(), Icons.Default.Build, MaterialTheme.colorScheme.secondary) {
+                        viewModel.selectStatusFilter(TicketStatus.IN_PROGRESS)
                         navController.navigate(Screen.TicketList.route)
                     }
                 }

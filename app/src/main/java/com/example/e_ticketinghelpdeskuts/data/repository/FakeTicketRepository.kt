@@ -6,6 +6,7 @@ import com.example.e_ticketinghelpdeskuts.domain.model.Comment
 import com.example.e_ticketinghelpdeskuts.domain.model.Ticket
 import com.example.e_ticketinghelpdeskuts.domain.model.TicketActivity
 import com.example.e_ticketinghelpdeskuts.domain.model.TicketStatus
+import com.example.e_ticketinghelpdeskuts.domain.model.displayName
 import com.example.e_ticketinghelpdeskuts.domain.repository.TicketRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -39,38 +40,6 @@ class FakeTicketRepository : TicketRepository {
         )
     }
 
-    override suspend fun updateTicketStatus(id: String, status: TicketStatus, actor: String) {
-        var updatedTicket: Ticket? = null
-
-        val currentList = ticketsFlow.value.map { ticket ->
-            if (ticket.id == id) {
-                val latest = ticket.copy(
-                    status = status,
-                    activities = ticket.activities + TicketActivity(
-                        id = UUID.randomUUID().toString(),
-                        title = "Status diubah menjadi ${status.name}",
-                        actor = actor,
-                        timestamp = now()
-                    )
-                )
-                updatedTicket = latest
-                latest
-            } else {
-                ticket
-            }
-        }
-
-        ticketsFlow.emit(currentList)
-
-        updatedTicket?.let {
-            pushNotification(
-                title = "Status Tiket Diperbarui",
-                message = "${it.id} sekarang berstatus ${it.status.name}",
-                ticketId = it.id
-            )
-        }
-    }
-
     override suspend fun assignTicket(id: String, assignee: String, actor: String) {
         var updatedTicket: Ticket? = null
 
@@ -89,7 +58,7 @@ class FakeTicketRepository : TicketRepository {
                         ),
                         TicketActivity(
                             id = UUID.randomUUID().toString(),
-                            title = "Status otomatis berubah menjadi IN_PROGRESS",
+                            title = "Status otomatis berubah menjadi In Progress",
                             actor = "System",
                             timestamp = timestamp
                         )
@@ -107,7 +76,7 @@ class FakeTicketRepository : TicketRepository {
         updatedTicket?.let {
             pushNotification(
                 title = "Penugasan Tiket",
-                message = "${it.id} ditugaskan ke $assignee — status: IN_PROGRESS",
+                message = "${it.id} ditugaskan ke $assignee — status: In Progress",
                 ticketId = it.id
             )
         }
@@ -122,7 +91,7 @@ class FakeTicketRepository : TicketRepository {
                     status = TicketStatus.ASSIGNED,
                     activities = ticket.activities + TicketActivity(
                         id = UUID.randomUUID().toString(),
-                        title = "Tiket diterima oleh admin — status ASSIGNED",
+                        title = "Tiket diterima oleh admin — status Assigned",
                         actor = actor,
                         timestamp = now()
                     )
@@ -139,7 +108,7 @@ class FakeTicketRepository : TicketRepository {
         updatedTicket?.let {
             pushNotification(
                 title = "Tiket Diterima",
-                message = "${it.id} telah diterima oleh $actor — status: ASSIGNED",
+                message = "${it.id} telah diterima oleh $actor — status: Assigned",
                 ticketId = it.id
             )
         }
@@ -154,7 +123,7 @@ class FakeTicketRepository : TicketRepository {
                     status = TicketStatus.CLOSED,
                     activities = ticket.activities + TicketActivity(
                         id = UUID.randomUUID().toString(),
-                        title = "Tiket diselesaikan — status CLOSED",
+                        title = "Tiket diselesaikan — status Closed",
                         actor = actor,
                         timestamp = now()
                     )
@@ -272,7 +241,7 @@ class FakeTicketRepository : TicketRepository {
                 activities = listOf(
                     TicketActivity("A-002", "Tiket dibuat", "Siti Aminah", "2026-04-07 14:20"),
                     TicketActivity("A-003", "Tiket di-assign ke Rina Helpdesk", "Admin UTS", "2026-04-07 14:45"),
-                    TicketActivity("A-004", "Status otomatis berubah menjadi IN_PROGRESS", "System", "2026-04-07 14:45")
+                    TicketActivity("A-004", "Status otomatis berubah menjadi In Progress", "System", "2026-04-07 14:45")
                 )
             ),
             Ticket(
@@ -286,8 +255,8 @@ class FakeTicketRepository : TicketRepository {
                 assignedTo = "Arif Helpdesk",
                 activities = listOf(
                     TicketActivity("A-005", "Tiket dibuat", "Budi Utomo", "2026-04-06 10:00"),
-                    TicketActivity("A-006", "Status diubah menjadi IN_PROGRESS", "Arif Helpdesk", "2026-04-06 10:30"),
-                    TicketActivity("A-007", "Status diubah menjadi CLOSED", "Arif Helpdesk", "2026-04-06 11:10")
+                    TicketActivity("A-006", "Status diubah menjadi In Progress", "Arif Helpdesk", "2026-04-06 10:30"),
+                    TicketActivity("A-007", "Status diubah menjadi Closed", "Arif Helpdesk", "2026-04-06 11:10")
                 )
             )
         )

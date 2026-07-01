@@ -33,6 +33,7 @@ import com.example.e_ticketinghelpdeskuts.domain.model.Ticket
 import com.example.e_ticketinghelpdeskuts.domain.model.TicketActivity
 import com.example.e_ticketinghelpdeskuts.domain.model.TicketStatus
 import com.example.e_ticketinghelpdeskuts.domain.model.UserRole
+import com.example.e_ticketinghelpdeskuts.domain.model.displayName
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -198,8 +199,8 @@ fun TicketDetailScreen(navController: NavController, viewModel: TicketViewModel,
                         }
                     }
 
-                    // Step 4: Helpdesk / Admin klik Selesai — IN_PROGRESS → CLOSED
-                    if (ticket!!.status == TicketStatus.IN_PROGRESS) {
+                    // Step 4: Helpdesk klik Selesai — IN_PROGRESS → CLOSED (khusus helpdesk)
+                    if (currentUser?.role == UserRole.HELPDESK && ticket!!.status == TicketStatus.IN_PROGRESS) {
                         item {
                             Card(
                                 modifier = Modifier.fillMaxWidth(),
@@ -389,7 +390,7 @@ private fun TicketInfoCard(ticket: Ticket) {
                     border = androidx.compose.foundation.BorderStroke(1.dp, statusColor.copy(alpha = 0.3f))
                 ) {
                     Text(
-                        text = ticket.status.name,
+                        text = ticket.status.displayName().uppercase(),
                         modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
                         color = statusColor,
                         style = MaterialTheme.typography.labelSmall,

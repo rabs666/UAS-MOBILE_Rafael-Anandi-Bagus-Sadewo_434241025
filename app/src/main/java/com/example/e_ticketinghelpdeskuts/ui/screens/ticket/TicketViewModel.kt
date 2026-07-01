@@ -281,23 +281,8 @@ class TicketViewModel(
         }
     }
 
-    fun updateStatus(id: String, status: TicketStatus) {
-        val actor = _currentUser.value
-        if (actor == null) {
-            _authMessage.value = AuthMessage.error("Silakan login terlebih dahulu.")
-            return
-        }
-
-        if (actor.role == UserRole.USER) {
-            _authMessage.value = AuthMessage.error("Hanya helpdesk/admin yang dapat mengubah status tiket.")
-            return
-        }
-
-        viewModelScope.launch {
-            repository.updateTicketStatus(id, status, actor.name)
-        }
-    }
-
+    // Step 3: Menugaskan helpdesk = hak ADMIN saja (SRS FR-007 #4).
+    // Saat assign, status otomatis berubah OPEN/ASSIGNED → IN_PROGRESS di repository.
     fun assignTicket(id: String, assignee: String) {
         val actor = _currentUser.value
         if (actor == null) {
@@ -305,8 +290,8 @@ class TicketViewModel(
             return
         }
 
-        if (actor.role == UserRole.USER) {
-            _authMessage.value = AuthMessage.error("Hanya helpdesk/admin yang dapat assign tiket.")
+        if (actor.role != UserRole.ADMIN) {
+            _authMessage.value = AuthMessage.error("Hanya admin yang dapat menugaskan helpdesk.")
             return
         }
 
@@ -332,6 +317,8 @@ class TicketViewModel(
         }
     }
 
+    // Step 4: Menyelesaikan/menutup tiket = hak HELPDESK saja.
+    // Helpdesk yang mengerjakan tiket, jadi hanya helpdesk yang bisa klik Selesai (IN_PROGRESS → CLOSED).
     fun finishTicket(id: String) {
         val actor = _currentUser.value
         if (actor == null) {
@@ -339,8 +326,8 @@ class TicketViewModel(
             return
         }
 
-        if (actor.role == UserRole.USER) {
-            _authMessage.value = AuthMessage.error("Hanya helpdesk/admin yang dapat menyelesaikan tiket.")
+        if (actor.role != UserRole.HELPDESK) {
+            _authMessage.value = AuthMessage.error("Hanya helpdesk yang dapat menyelesaikan tiket.")
             return
         }
 
